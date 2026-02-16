@@ -1,10 +1,9 @@
 import os
-from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
-os.environ["DATABASE_URL"] = "sqlite:///./test_commander.db"
+os.environ["DATABASE_URL"] = "sqlite+pysqlite:///:memory:"
 
 from app.core.database import Base, engine, init_db  # noqa: E402
 from app.main import app  # noqa: E402
@@ -16,9 +15,6 @@ def reset_db() -> None:
     init_db()
     yield
     Base.metadata.drop_all(bind=engine)
-    db_path = Path("test_commander.db")
-    if db_path.exists():
-        db_path.unlink()
 
 
 def _create_program_template_subproject(client: TestClient) -> tuple[str, str, str]:
